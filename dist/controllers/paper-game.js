@@ -15,13 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createGame = void 0;
 const game_1 = __importDefault(require("../models/game"));
 const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const roomName = req.body.text;
-    const newGame = new game_1.default(roomName);
+    const room = req.body.room;
+    const newGame = new game_1.default({ room });
     try {
         yield newGame.save();
-        res.status(201).json({
-            message: "Game created successfully!",
-        });
+        res.status(201).json({ message: "created game", room: room });
     }
     catch (err) {
         console.log(err);

@@ -1,11 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
+import bodyParser from "body-parser";
 import paperGameRoutes from "./routes/paper-game";
 import "dotenv/config";
 
 const app = express();
 
-//app.use(paperGameRoutes);
+app.use(bodyParser.json());
+app.use(paperGameRoutes);
 
 mongoose
   .connect(

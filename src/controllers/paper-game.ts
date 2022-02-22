@@ -2,16 +2,14 @@ import { RequestHandler } from "express";
 import Game from "../models/game";
 
 export const createGame: RequestHandler = async (req, res, next) => {
-  const roomName = (req.body as { text: string }).text;
+  const room = (req.body as { room: string }).room;
 
-  const newGame = new Game(roomName);
+  const newGame = new Game({ room });
 
   try {
     await newGame.save();
 
-    res.status(201).json({
-      message: "Game created successfully!",
-    });
+    res.status(201).json({ message: "created game", room: room });
   } catch (err) {
     console.log(err);
   }
