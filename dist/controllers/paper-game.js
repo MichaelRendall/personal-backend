@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createGame = void 0;
+exports.createSubmissions = exports.createGame = void 0;
 const game_1 = __importDefault(require("../models/game"));
 const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const room = req.body.room;
@@ -26,3 +26,20 @@ const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.createGame = createGame;
+const createSubmissions = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    //const submissions = (req.body as { room: string }).room;
+    const submissions = req.body;
+    res
+        .status(201)
+        .json({ message: "created submissions", submissions: submissions });
+    /* const newSubmission = new Submission({ submissions });
+  
+    try {
+      await newGame.save();
+  
+      res.status(201).json({ message: "created game", room: room });
+    } catch (err) {
+      console.log(err);
+    } */
+});
+exports.createSubmissions = createSubmissions;

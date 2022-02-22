@@ -4,4 +4,5 @@ const express_1 = require("express");
 const paper_game_1 = require("../controllers/paper-game");
 const router = (0, express_1.Router)();
 router.post("/create-game", paper_game_1.createGame);
+router.post("/create-submissions", paper_game_1.createSubmissions);
 exports.default = router;
