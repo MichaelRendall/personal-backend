@@ -14,12 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSubmissions = exports.createGame = void 0;
 const game_1 = __importDefault(require("../models/game"));
+const uuid_1 = require("uuid");
 const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const room = req.body.room;
+    const name = req.body.name;
+    const uuid = (0, uuid_1.v4)();
     const newGame = new game_1.default({ room });
     try {
-        yield newGame.save();
-        res.status(201).json({ message: "created game", room: room });
+        //await newGame.save();
+        res.status(201).json({ message: "created game", uuid: uuid, name: name });
     }
     catch (err) {
         console.log(err);
