@@ -19,9 +19,9 @@ const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const room = req.body.room;
     const name = req.body.name;
     const uuid = (0, uuid_1.v4)();
-    const newGame = new game_1.default({ room });
+    const newGame = new game_1.default({ room, users: [{ name: name, uuid: uuid }] });
     try {
-        //await newGame.save();
+        yield newGame.save();
         res.status(201).json({ message: "created game", uuid: uuid, name: name });
     }
     catch (err) {

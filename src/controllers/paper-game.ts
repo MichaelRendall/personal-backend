@@ -8,10 +8,10 @@ export const createGame: RequestHandler = async (req, res, next) => {
   const name = (req.body as { name: string }).name;
 
   const uuid = uuidv4();
-  const newGame = new Game({ room });
+  const newGame = new Game({ room, users: [{ name: name, uuid: uuid }] });
 
   try {
-    //await newGame.save();
+    await newGame.save();
 
     res.status(201).json({ message: "created game", uuid: uuid, name: name });
   } catch (err) {
