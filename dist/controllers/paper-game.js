@@ -15,7 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSubmissions = exports.joinGame = exports.createGame = void 0;
 const game_1 = __importDefault(require("../models/game"));
 const uuid_1 = require("uuid");
+const express_validator_1 = require("express-validator");
 const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const room = req.body.room;
     const name = req.body.name;
     const uuid = (0, uuid_1.v4)();
@@ -25,9 +30,7 @@ const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     });
     try {
         const result = yield newGame.save();
-        res
-            .status(201)
-            .json({
+        res.status(201).json({
             message: "created game",
             uuid: uuid,
             name: name,

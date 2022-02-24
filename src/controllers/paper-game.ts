@@ -2,8 +2,14 @@ import { RequestHandler } from "express";
 import Game from "../models/game";
 import Submission from "../models/submission";
 import { v4 as uuidv4 } from "uuid";
+import { validationResult } from "express-validator";
 
 export const createGame: RequestHandler = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const room = (req.body as { room: string }).room;
   const name = (req.body as { name: string }).name;
 
@@ -16,14 +22,12 @@ export const createGame: RequestHandler = async (req, res, next) => {
   try {
     const result = await newGame.save();
 
-    res
-      .status(201)
-      .json({
-        message: "created game",
-        uuid: uuid,
-        name: name,
-        roomId: result._id,
-      });
+    res.status(201).json({
+      message: "created game",
+      uuid: uuid,
+      name: name,
+      roomId: result._id,
+    });
   } catch (err) {
     console.log(err);
   }
