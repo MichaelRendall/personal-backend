@@ -8,16 +8,28 @@ export const createGame: RequestHandler = async (req, res, next) => {
   const name = (req.body as { name: string }).name;
 
   const uuid = uuidv4();
-  const newGame = new Game({ room, users: [{ name: name, uuid: uuid }] });
+  const newGame = new Game({
+    room,
+    users: [{ name: name, uuid: uuid, isHost: true }],
+  });
 
   try {
-    await newGame.save();
+    const result = await newGame.save();
 
-    res.status(201).json({ message: "created game", uuid: uuid, name: name });
+    res
+      .status(201)
+      .json({
+        message: "created game",
+        uuid: uuid,
+        name: name,
+        roomId: result._id,
+      });
   } catch (err) {
     console.log(err);
   }
 };
+
+export const joinGame: RequestHandler = async (req, res, next) => {};
 
 export const createSubmissions: RequestHandler = async (req, res, next) => {
   //const submissions = (req.body as { room: string }).room;

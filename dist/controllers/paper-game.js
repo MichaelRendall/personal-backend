@@ -12,23 +12,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSubmissions = exports.createGame = void 0;
+exports.createSubmissions = exports.joinGame = exports.createGame = void 0;
 const game_1 = __importDefault(require("../models/game"));
 const uuid_1 = require("uuid");
 const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const room = req.body.room;
     const name = req.body.name;
     const uuid = (0, uuid_1.v4)();
-    const newGame = new game_1.default({ room, users: [{ name: name, uuid: uuid }] });
+    const newGame = new game_1.default({
+        room,
+        users: [{ name: name, uuid: uuid, isHost: true }],
+    });
     try {
-        yield newGame.save();
-        res.status(201).json({ message: "created game", uuid: uuid, name: name });
+        const result = yield newGame.save();
+        res
+            .status(201)
+            .json({
+            message: "created game",
+            uuid: uuid,
+            name: name,
+            roomId: result._id,
+        });
     }
     catch (err) {
         console.log(err);
     }
 });
 exports.createGame = createGame;
+const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () { });
+exports.joinGame = joinGame;
 const createSubmissions = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     //const submissions = (req.body as { room: string }).room;
     const submissions = req.body;

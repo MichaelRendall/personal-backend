@@ -11,6 +11,11 @@ const usersSchema = new Schema({
     type: String,
     required: true,
   },
+  isHost: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 const gameSchema = new Schema(
