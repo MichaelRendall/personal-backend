@@ -19,7 +19,7 @@ const express_validator_1 = require("express-validator");
 const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        throw new Error("Please fill your name and the room code");
     }
     const room = req.body.room;
     const name = req.body.name;
@@ -38,11 +38,36 @@ const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (err) {
-        console.log(err);
+        next(err);
     }
 });
 exports.createGame = createGame;
-const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () { });
+const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        throw new Error("Please fill your name and the room code");
+    }
+    const room = req.body.room;
+    const name = req.body.name;
+    const uuid = (0, uuid_1.v4)();
+    try {
+        const existingRoom = yield game_1.default.findOne({ room: room });
+        if (!existingRoom) {
+            throw new Error("Room does not exist");
+        }
+        existingRoom.users.push({ name: name, uuid: uuid });
+        const result = yield existingRoom.save();
+        res.status(201).json({
+            message: "joined game",
+            uuid: uuid,
+            name: name,
+            roomId: result._id,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
 exports.joinGame = joinGame;
 const createSubmissions = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     //const submissions = (req.body as { room: string }).room;

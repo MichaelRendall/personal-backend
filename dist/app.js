@@ -17,6 +17,9 @@ app.use((req, res, next) => {
     next();
 });
 app.use(paper_game_1.default);
+app.use((err, req, res, next) => {
+    res.status(500).json({ message: err.message });
+});
 mongoose_1.default
     .connect(`mongodb+srv://${process.env.DATABASE_NAME}:${process.env.DATABASE_PASSWORD}@cluster0.dyb0r.mongodb.net/games?retryWrites=true&w=majority`)
     .then((result) => {

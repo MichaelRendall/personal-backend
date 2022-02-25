@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import paperGameRoutes from "./routes/paper-game";
@@ -19,6 +19,10 @@ app.use((req, res, next) => {
 });
 
 app.use(paperGameRoutes);
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).json({ message: err.message });
+});
 
 mongoose
   .connect(
