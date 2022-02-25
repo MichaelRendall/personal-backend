@@ -23,7 +23,7 @@ router.post(
 
 router.post(
   "/leave-game",
-  [body("room").trim().not().isEmpty(), body("uuid").trim().not().isEmpty()],
+  [body("roomId").trim().not().isEmpty(), body("uuid").trim().not().isEmpty()],
   leaveGame
 );
 

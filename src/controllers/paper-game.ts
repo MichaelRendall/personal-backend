@@ -70,11 +70,11 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
   if (!errors.isEmpty()) {
     throw new Error("A valid room and user must be set in order to leave");
   }
-  const room = (req.body as { room: string }).room;
+  const roomId = (req.body as { roomId: string }).roomId;
   const uuid = (req.body as { uuid: string }).uuid;
 
   try {
-    const existingRoom = await Game.findById(room);
+    const existingRoom = await Game.findById(roomId);
 
     if (!existingRoom) {
       throw new Error("Room does not exist");
@@ -88,6 +88,7 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
 
     res.status(201).json({
       message: "left game",
+      removeData: true,
     });
   } catch (err) {
     next(err);

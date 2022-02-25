@@ -74,10 +74,10 @@ const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     if (!errors.isEmpty()) {
         throw new Error("A valid room and user must be set in order to leave");
     }
-    const room = req.body.room;
+    const roomId = req.body.roomId;
     const uuid = req.body.uuid;
     try {
-        const existingRoom = yield game_1.default.findById(room);
+        const existingRoom = yield game_1.default.findById(roomId);
         if (!existingRoom) {
             throw new Error("Room does not exist");
         }
@@ -86,6 +86,7 @@ const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         yield existingRoom.save();
         res.status(201).json({
             message: "left game",
+            removeData: true,
         });
     }
     catch (err) {
