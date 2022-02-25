@@ -6,5 +6,6 @@ const express_validator_1 = require("express-validator");
 const router = (0, express_1.Router)();
 router.post("/create-game", [(0, express_validator_1.body)("room").trim().not().isEmpty(), (0, express_validator_1.body)("name").trim().not().isEmpty()], paper_game_1.createGame);
 router.post("/join-game", [(0, express_validator_1.body)("room").trim().not().isEmpty(), (0, express_validator_1.body)("name").trim().not().isEmpty()], paper_game_1.joinGame);
+router.post("/leave-game", [(0, express_validator_1.body)("room").trim().not().isEmpty(), (0, express_validator_1.body)("uuid").trim().not().isEmpty()], paper_game_1.leaveGame);
 router.post("/create-submissions", paper_game_1.createSubmissions);
 exports.default = router;

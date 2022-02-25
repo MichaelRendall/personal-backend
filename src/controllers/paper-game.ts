@@ -65,6 +65,35 @@ export const joinGame: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const leaveGame: RequestHandler = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new Error("A valid room and user must be set in order to leave");
+  }
+  const room = (req.body as { room: string }).room;
+  const uuid = (req.body as { uuid: string }).uuid;
+
+  try {
+    const existingRoom = await Game.findById(room);
+
+    if (!existingRoom) {
+      throw new Error("Room does not exist");
+    }
+    const updatedUsers = existingRoom.users.filter(
+      (user) => user.uuid !== uuid
+    );
+
+    existingRoom.users = updatedUsers;
+    await existingRoom.save();
+
+    res.status(201).json({
+      message: "left game",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const createSubmissions: RequestHandler = async (req, res, next) => {
   //const submissions = (req.body as { room: string }).room;
   const submissions = req.body;

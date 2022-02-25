@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSubmissions = exports.joinGame = exports.createGame = void 0;
+exports.createSubmissions = exports.leaveGame = exports.joinGame = exports.createGame = void 0;
 const game_1 = __importDefault(require("../models/game"));
 const uuid_1 = require("uuid");
 const express_validator_1 = require("express-validator");
@@ -69,6 +69,30 @@ const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.joinGame = joinGame;
+const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        throw new Error("A valid room and user must be set in order to leave");
+    }
+    const room = req.body.room;
+    const uuid = req.body.uuid;
+    try {
+        const existingRoom = yield game_1.default.findById(room);
+        if (!existingRoom) {
+            throw new Error("Room does not exist");
+        }
+        const updatedUsers = existingRoom.users.filter((user) => user.uuid !== uuid);
+        existingRoom.users = updatedUsers;
+        yield existingRoom.save();
+        res.status(201).json({
+            message: "left game",
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.leaveGame = leaveGame;
 const createSubmissions = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     //const submissions = (req.body as { room: string }).room;
     const submissions = req.body;

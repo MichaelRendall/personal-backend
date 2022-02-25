@@ -1,8 +1,23 @@
 import mongoose from "mongoose";
 
+interface userInterface {
+  name: string;
+  uuid: string;
+  isHost: boolean;
+}
+
+interface gameInterface {
+  room: string;
+  users: {
+    name: string;
+    uuid: string;
+    isHost?: boolean;
+  }[];
+}
+
 const Schema = mongoose.Schema;
 
-const usersSchema = new Schema({
+const usersSchema = new Schema<userInterface>({
   name: {
     type: String,
     required: true,
@@ -18,7 +33,7 @@ const usersSchema = new Schema({
   },
 });
 
-const gameSchema = new Schema(
+const gameSchema = new Schema<gameInterface>(
   {
     room: {
       type: String,
@@ -29,4 +44,4 @@ const gameSchema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Game", gameSchema);
+export default mongoose.model<gameInterface>("Game", gameSchema);
