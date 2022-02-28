@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSubmissions = exports.leaveGame = exports.joinGame = exports.createGame = void 0;
+exports.createSubmissions = exports.getGame = exports.leaveGame = exports.joinGame = exports.createGame = void 0;
 const game_1 = __importDefault(require("../models/game"));
 const uuid_1 = require("uuid");
 const express_validator_1 = require("express-validator");
@@ -94,6 +94,23 @@ const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.leaveGame = leaveGame;
+const getGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const roomId = req.params.roomId;
+    try {
+        const game = yield game_1.default.findById(roomId);
+        if (!game) {
+            throw new Error("Room does not exist");
+        }
+        res.status(200).json({
+            message: "fetched game",
+            game: game,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.getGame = getGame;
 const createSubmissions = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     //const submissions = (req.body as { room: string }).room;
     const submissions = req.body;

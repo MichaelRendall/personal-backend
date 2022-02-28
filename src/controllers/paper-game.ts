@@ -95,6 +95,25 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getGame: RequestHandler = async (req, res, next) => {
+  const roomId = req.params.roomId;
+
+  try {
+    const game = await Game.findById(roomId);
+
+    if (!game) {
+      throw new Error("Room does not exist");
+    }
+
+    res.status(200).json({
+      message: "fetched game",
+      game: game,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const createSubmissions: RequestHandler = async (req, res, next) => {
   //const submissions = (req.body as { room: string }).room;
   const submissions = req.body;

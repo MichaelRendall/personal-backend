@@ -3,6 +3,7 @@ import {
   createGame,
   joinGame,
   leaveGame,
+  getGame,
   createSubmissions,
 } from "../controllers/paper-game";
 import { body } from "express-validator";
@@ -26,6 +27,8 @@ router.post(
   [body("roomId").trim().not().isEmpty(), body("uuid").trim().not().isEmpty()],
   leaveGame
 );
+
+router.get("/get-game/:roomId", getGame);
 
 router.post("/create-submissions", createSubmissions);
 
