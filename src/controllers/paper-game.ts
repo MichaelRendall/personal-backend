@@ -3,6 +3,7 @@ import Game from "../models/game";
 import Submission from "../models/submission";
 import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
+import io from "../socket";
 
 export const createGame: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
@@ -53,7 +54,10 @@ export const joinGame: RequestHandler = async (req, res, next) => {
     existingRoom.users.push({ name: name, uuid: uuid });
 
     const result = await existingRoom.save();
-
+    //io.emit("paper-game", { action: "joined", game: result });
+    require("../socket")
+      .getIO()
+      .emit("paper-game", { action: "joined", game: result });
     res.status(201).json({
       message: "joined game",
       uuid: uuid,

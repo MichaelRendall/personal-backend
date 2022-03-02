@@ -24,6 +24,10 @@ mongoose_1.default
     .connect(`mongodb+srv://${process.env.DATABASE_NAME}:${process.env.DATABASE_PASSWORD}@cluster0.dyb0r.mongodb.net/games?retryWrites=true&w=majority`)
     .then((result) => {
     const server = app.listen(8080);
-    console.log("running1");
+    const io = require("./socket").init(server);
+    console.log("got here");
+    io.on("connection", () => {
+        console.log("Client Connected3");
+    });
 })
     .catch((err) => console.log(err));

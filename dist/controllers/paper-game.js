@@ -57,6 +57,10 @@ const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         }
         existingRoom.users.push({ name: name, uuid: uuid });
         const result = yield existingRoom.save();
+        //io.emit("paper-game", { action: "joined", game: result });
+        require("../socket")
+            .getIO()
+            .emit("paper-game", { action: "joined", game: result });
         res.status(201).json({
             message: "joined game",
             uuid: uuid,

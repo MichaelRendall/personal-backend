@@ -31,6 +31,11 @@ mongoose
   )
   .then((result) => {
     const server = app.listen(8080);
-    console.log("running1");
+    const io = require("./socket").init(server);
+
+    console.log("got here");
+    io.on("connection", () => {
+      console.log("Client Connected3");
+    });
   })
   .catch((err) => console.log(err));
