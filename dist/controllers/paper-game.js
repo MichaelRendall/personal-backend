@@ -58,9 +58,10 @@ const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         existingRoom.users.push({ name: name, uuid: uuid });
         const result = yield existingRoom.save();
         //io.emit("paper-game", { action: "joined", game: result });
-        require("../socket")
-            .getIO()
-            .emit("paper-game", { action: "joined", game: result });
+        require("../socket").getIO().emit("join-game", {
+            message: "joined game",
+            game: result,
+        });
         res.status(201).json({
             message: "joined game",
             uuid: uuid,
@@ -88,6 +89,10 @@ const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         const updatedUsers = existingRoom.users.filter((user) => user.uuid !== uuid);
         existingRoom.users = updatedUsers;
         yield existingRoom.save();
+        require("../socket").getIO().emit("leave-game", {
+            message: "left game",
+            game: existingRoom,
+        });
         res.status(201).json({
             message: "left game",
             removeData: true,

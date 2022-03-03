@@ -34,8 +34,8 @@ mongoose
     const io = require("./socket").init(server);
 
     console.log("got here");
-    io.on("connection", () => {
-      console.log("Client Connected3");
+    io.on("connection", (socket: any) => {
+      console.log(socket.id);
     });
   })
   .catch((err) => console.log(err));

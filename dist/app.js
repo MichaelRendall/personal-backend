@@ -26,8 +26,8 @@ mongoose_1.default
     const server = app.listen(8080);
     const io = require("./socket").init(server);
     console.log("got here");
-    io.on("connection", () => {
-        console.log("Client Connected3");
+    io.on("connection", (socket) => {
+        console.log(socket.id);
     });
 })
     .catch((err) => console.log(err));

@@ -55,9 +55,10 @@ export const joinGame: RequestHandler = async (req, res, next) => {
 
     const result = await existingRoom.save();
     //io.emit("paper-game", { action: "joined", game: result });
-    require("../socket")
-      .getIO()
-      .emit("paper-game", { action: "joined", game: result });
+    require("../socket").getIO().emit("join-game", {
+      message: "joined game",
+      game: result,
+    });
     res.status(201).json({
       message: "joined game",
       uuid: uuid,
@@ -89,6 +90,11 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
 
     existingRoom.users = updatedUsers;
     await existingRoom.save();
+
+    require("../socket").getIO().emit("leave-game", {
+      message: "left game",
+      game: existingRoom,
+    });
 
     res.status(201).json({
       message: "left game",
