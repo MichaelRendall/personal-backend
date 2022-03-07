@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const paper_game_1 = __importDefault(require("./routes/paper-game"));
+const socket_io_1 = require("socket.io");
 require("dotenv/config");
 const app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
@@ -24,10 +25,17 @@ mongoose_1.default
     .connect(`mongodb+srv://${process.env.DATABASE_NAME}:${process.env.DATABASE_PASSWORD}@cluster0.dyb0r.mongodb.net/games?retryWrites=true&w=majority`)
     .then((result) => {
     const server = app.listen(8080);
-    const io = require("./socket").init(server);
-    console.log("got here");
-    io.on("connection", (socket) => {
-        console.log(socket.id);
+    //const io = require("socket.io")(server);
+    const io = new socket_io_1.Server(server, {
+        cors: {
+            origin: "http://localhost:3000",
+            methods: ["GET", "POST"],
+        },
     });
+    console.log("got here");
+    app.set("socketio", io);
+    /*  io.on("connection", (socket: any) => {
+      console.log(socket.id);
+    }); */
 })
     .catch((err) => console.log(err));

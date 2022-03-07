@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import paperGameRoutes from "./routes/paper-game";
+import { Server } from "socket.io";
 import "dotenv/config";
 
 const app = express();
@@ -31,11 +32,18 @@ mongoose
   )
   .then((result) => {
     const server = app.listen(8080);
-    const io = require("./socket").init(server);
+    //const io = require("socket.io")(server);
+    const io = new Server(server, {
+      cors: {
+        origin: "http://localhost:3000", //your client URL
+        methods: ["GET", "POST"],
+      },
+    });
 
     console.log("got here");
-    io.on("connection", (socket: any) => {
+    app.set("socketio", io);
+    /*  io.on("connection", (socket: any) => {
       console.log(socket.id);
-    });
+    }); */
   })
   .catch((err) => console.log(err));

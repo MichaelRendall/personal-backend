@@ -30,6 +30,11 @@ const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     });
     try {
         const result = yield newGame.save();
+        const io = req.app.get("socketio");
+        io.on("connection", (socket) => {
+            console.log(`${name} created room ${room}`);
+            socket.join(room);
+        });
         res.status(201).json({
             message: "created game",
             uuid: uuid,
@@ -58,7 +63,17 @@ const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         existingRoom.users.push({ name: name, uuid: uuid });
         const result = yield existingRoom.save();
         //io.emit("paper-game", { action: "joined", game: result });
-        require("../socket").getIO().emit("join-game", {
+        /* require("../socket").getIO().join(room);
+        require("../socket").getIO().to(room).emit("join-game", {
+          message: "joined game",
+          game: result,
+        }); */
+        const io = req.app.get("socketio");
+        io.on("connection", (socket) => {
+            console.log(`${name} joined room ${room}`);
+            socket.join(room);
+        });
+        io.to(room).emit("join-game", {
             message: "joined game",
             game: result,
         });
@@ -89,8 +104,17 @@ const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         const updatedUsers = existingRoom.users.filter((user) => user.uuid !== uuid);
         existingRoom.users = updatedUsers;
         yield existingRoom.save();
-        require("../socket").getIO().emit("leave-game", {
-            message: "left game",
+        /*  require("../socket").getIO().to(existingRoom.room).emit("leave-game", {
+          message: "left game",
+          game: existingRoom,
+        }); */
+        const io = req.app.get("socketio");
+        io.on("connection", (socket) => {
+            socket.leave(existingRoom.room);
+            console.log(`user left room ${existingRoom.room}`);
+        });
+        io.to(existingRoom.room).emit("leave-game", {
+            message: "joined game",
             game: existingRoom,
         });
         res.status(201).json({

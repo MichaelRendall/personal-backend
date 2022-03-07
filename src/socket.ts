@@ -9,7 +9,11 @@ module.exports = {
         methods: ["GET", "POST"],
       },
     });
-    return io;
+
+    io.on("connection", (socket: any) => {
+      console.log(socket.id);
+      return io;
+    });
   },
   getIO: () => {
     if (!io) {

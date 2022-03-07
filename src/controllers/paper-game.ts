@@ -23,6 +23,11 @@ export const createGame: RequestHandler = async (req, res, next) => {
   try {
     const result = await newGame.save();
 
+    const io = req.app.get("socketio");
+    io.on("connection", (socket: any) => {
+      console.log(`${name} created room ${room}`);
+      socket.join(room);
+    });
     res.status(201).json({
       message: "created game",
       uuid: uuid,
@@ -55,7 +60,17 @@ export const joinGame: RequestHandler = async (req, res, next) => {
 
     const result = await existingRoom.save();
     //io.emit("paper-game", { action: "joined", game: result });
-    require("../socket").getIO().emit("join-game", {
+    /* require("../socket").getIO().join(room);
+    require("../socket").getIO().to(room).emit("join-game", {
+      message: "joined game",
+      game: result,
+    }); */
+    const io = req.app.get("socketio");
+    io.on("connection", (socket: any) => {
+      console.log(`${name} joined room ${room}`);
+      socket.join(room);
+    });
+    io.to(room).emit("join-game", {
       message: "joined game",
       game: result,
     });
@@ -91,8 +106,18 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
     existingRoom.users = updatedUsers;
     await existingRoom.save();
 
-    require("../socket").getIO().emit("leave-game", {
+    /*  require("../socket").getIO().to(existingRoom.room).emit("leave-game", {
       message: "left game",
+      game: existingRoom,
+    }); */
+
+    const io = req.app.get("socketio");
+    io.on("connection", (socket: any) => {
+      socket.leave(existingRoom.room);
+      console.log(`user left room ${existingRoom.room}`);
+    });
+    io.to(existingRoom.room).emit("leave-game", {
+      message: "joined game",
       game: existingRoom,
     });
 
