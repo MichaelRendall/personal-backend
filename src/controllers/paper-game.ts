@@ -23,11 +23,16 @@ export const createGame: RequestHandler = async (req, res, next) => {
   try {
     const result = await newGame.save();
 
-    const io = req.app.get("socketio");
+    /* const io = req.app.get("socketio");
     io.on("connection", (socket: any) => {
       console.log(`${name} created room ${room}`);
       socket.join(room);
-    });
+    }); */
+
+    const socket = req.app.get("socket");
+    console.log(`${name} created room ${room}`);
+    socket.join(room);
+
     res.status(201).json({
       message: "created game",
       uuid: uuid,
@@ -65,15 +70,21 @@ export const joinGame: RequestHandler = async (req, res, next) => {
       message: "joined game",
       game: result,
     }); */
-    const io = req.app.get("socketio");
+    /*  const io = req.app.get("socketio");
     io.on("connection", (socket: any) => {
       console.log(`${name} joined room ${room}`);
       socket.join(room);
-    });
+    }); */
+    const io = req.app.get("socketio");
+    const socket = req.app.get("socket");
+    console.log(`${name} joined room ${room}`);
+    socket.join(room);
+
     io.to(room).emit("join-game", {
       message: "joined game",
       game: result,
     });
+	
     res.status(201).json({
       message: "joined game",
       uuid: uuid,
@@ -111,13 +122,23 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
       game: existingRoom,
     }); */
 
-    const io = req.app.get("socketio");
+    /*  const io = req.app.get("socketio");
     io.on("connection", (socket: any) => {
       socket.leave(existingRoom.room);
       console.log(`user left room ${existingRoom.room}`);
     });
     io.to(existingRoom.room).emit("leave-game", {
       message: "joined game",
+      game: existingRoom,
+    }); */
+
+    const io = req.app.get("socketio");
+    const socket = req.app.get("socket");
+    console.log(`user left room ${existingRoom.room}`);
+    socket.leave(existingRoom.room);
+
+    io.to(existingRoom.room).emit("leave-game", {
+      message: "left game",
       game: existingRoom,
     });
 

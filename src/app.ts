@@ -42,8 +42,9 @@ mongoose
 
     console.log("got here");
     app.set("socketio", io);
-    /*  io.on("connection", (socket: any) => {
-      console.log(socket.id);
-    }); */
+    io.on("connection", (socket: any) => {
+      //console.log(socket.id);
+      app.set("socket", socket);
+    });
   })
   .catch((err) => console.log(err));
