@@ -8,6 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const paper_game_1 = __importDefault(require("./routes/paper-game"));
 const socket_io_1 = require("socket.io");
+const uuid_1 = require("uuid");
 require("dotenv/config");
 const app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
@@ -34,8 +35,21 @@ mongoose_1.default
     });
     console.log("got here");
     app.set("socketio", io);
+    io.use((socket, next) => {
+        const sessionId = socket.handshake.auth.sessionId;
+        if (sessionId) {
+            socket.sessionId = sessionId;
+            return next();
+        }
+        // create new session
+        socket.sessionId = (0, uuid_1.v4)();
+        next();
+    });
     io.on("connection", (socket) => {
-        //console.log(socket.id);
+        console.log(socket.sessionId);
+        socket.emit("session", {
+            sessionId: socket.sessionId,
+        });
         app.set("socket", socket);
     });
 })

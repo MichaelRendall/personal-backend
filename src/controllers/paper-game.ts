@@ -3,7 +3,6 @@ import Game from "../models/game";
 import Submission from "../models/submission";
 import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
-import io from "../socket";
 
 export const createGame: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
@@ -23,15 +22,9 @@ export const createGame: RequestHandler = async (req, res, next) => {
   try {
     const result = await newGame.save();
 
-    /* const io = req.app.get("socketio");
-    io.on("connection", (socket: any) => {
-      console.log(`${name} created room ${room}`);
-      socket.join(room);
-    }); */
-
     const socket = req.app.get("socket");
-    console.log(`${name} created room ${room}`);
     socket.join(room);
+    console.log(`${name} created room ${room}`);
 
     res.status(201).json({
       message: "created game",
@@ -40,6 +33,7 @@ export const createGame: RequestHandler = async (req, res, next) => {
       roomId: result._id,
     });
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -64,27 +58,16 @@ export const joinGame: RequestHandler = async (req, res, next) => {
     existingRoom.users.push({ name: name, uuid: uuid });
 
     const result = await existingRoom.save();
-    //io.emit("paper-game", { action: "joined", game: result });
-    /* require("../socket").getIO().join(room);
-    require("../socket").getIO().to(room).emit("join-game", {
-      message: "joined game",
-      game: result,
-    }); */
-    /*  const io = req.app.get("socketio");
-    io.on("connection", (socket: any) => {
-      console.log(`${name} joined room ${room}`);
-      socket.join(room);
-    }); */
-    const io = req.app.get("socketio");
+    
     const socket = req.app.get("socket");
-    console.log(`${name} joined room ${room}`);
     socket.join(room);
-
-    io.to(room).emit("join-game", {
+    console.log(`${name} joined room ${room}`);
+	
+    socket.to(room).emit("join-game", {
       message: "joined game",
       game: result,
     });
-	
+
     res.status(201).json({
       message: "joined game",
       uuid: uuid,
@@ -132,12 +115,12 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
       game: existingRoom,
     }); */
 
-    const io = req.app.get("socketio");
+    //const io = req.app.get("socketio");
     const socket = req.app.get("socket");
     console.log(`user left room ${existingRoom.room}`);
     socket.leave(existingRoom.room);
 
-    io.to(existingRoom.room).emit("leave-game", {
+    socket.to(existingRoom.room).emit("leave-game", {
       message: "left game",
       game: existingRoom,
     });

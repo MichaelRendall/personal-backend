@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import paperGameRoutes from "./routes/paper-game";
 import { Server } from "socket.io";
+import { v4 as uuidv4 } from "uuid";
 import "dotenv/config";
 
 const app = express();
@@ -42,8 +43,25 @@ mongoose
 
     console.log("got here");
     app.set("socketio", io);
+
+    io.use((socket: any, next) => {
+      const sessionId = socket.handshake.auth.sessionId;
+      if (sessionId) {
+        socket.sessionId = sessionId;
+        return next();
+      }
+      // create new session
+      socket.sessionId = uuidv4();
+      next();
+    });
+
     io.on("connection", (socket: any) => {
-      //console.log(socket.id);
+      console.log(socket.sessionId);
+
+      socket.emit("session", {
+        sessionId: socket.sessionId,
+      });
+
       app.set("socket", socket);
     });
   })
