@@ -31,8 +31,8 @@ const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     try {
         const result = yield newGame.save();
         const socket = req.app.get("socket");
-        socket.join(room);
-        console.log(`${name} created room ${room}`);
+        socket.join(result._id);
+        console.log(`${name} created room ${result._id}`);
         res.status(201).json({
             message: "created game",
             uuid: uuid,
@@ -62,9 +62,9 @@ const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         existingRoom.users.push({ name: name, uuid: uuid });
         const result = yield existingRoom.save();
         const socket = req.app.get("socket");
-        socket.join(room);
-        console.log(`${name} joined room ${room}`);
-        socket.to(room).emit("join-game", {
+        socket.join(existingRoom._id);
+        console.log(`${name} joined room ${existingRoom._id}`);
+        socket.to(existingRoom._id.toString()).emit("join-game", {
             message: "joined game",
             game: result,
         });
@@ -95,24 +95,10 @@ const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         const updatedUsers = existingRoom.users.filter((user) => user.uuid !== uuid);
         existingRoom.users = updatedUsers;
         yield existingRoom.save();
-        /*  require("../socket").getIO().to(existingRoom.room).emit("leave-game", {
-          message: "left game",
-          game: existingRoom,
-        }); */
-        /*  const io = req.app.get("socketio");
-        io.on("connection", (socket: any) => {
-          socket.leave(existingRoom.room);
-          console.log(`user left room ${existingRoom.room}`);
-        });
-        io.to(existingRoom.room).emit("leave-game", {
-          message: "joined game",
-          game: existingRoom,
-        }); */
-        //const io = req.app.get("socketio");
         const socket = req.app.get("socket");
-        console.log(`user left room ${existingRoom.room}`);
-        socket.leave(existingRoom.room);
-        socket.to(existingRoom.room).emit("leave-game", {
+        console.log(`user left room ${roomId}`);
+        socket.leave(roomId);
+        socket.to(roomId).emit("leave-game", {
             message: "left game",
             game: existingRoom,
         });
