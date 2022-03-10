@@ -69,7 +69,7 @@ export const joinGame: RequestHandler = async (req, res, next) => {
     socket.join(existingRoom._id.toString());
     console.log(`${name} joined room ${existingRoom._id.toString()}`);
 
-    socket.to(existingRoom._id.toString()).emit("join-game", {
+    socket.broadcast.to(existingRoom._id.toString()).emit("join-game", {
       message: "joined game",
       game: result,
     });
@@ -112,9 +112,9 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
 
     const socket = req.app.get("socket");
     console.log(`user left room ${roomId}`);
-    socket.leave(roomId);
+    socket.leave(roomId.toString());
 
-    socket.to(roomId).emit("leave-game", {
+    socket.broadcast.to(roomId.toString()).emit("leave-game", {
       message: "left game",
       game: existingRoom,
     });

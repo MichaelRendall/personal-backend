@@ -68,7 +68,7 @@ const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         const socket = req.app.get("socket");
         socket.join(existingRoom._id.toString());
         console.log(`${name} joined room ${existingRoom._id.toString()}`);
-        socket.to(existingRoom._id.toString()).emit("join-game", {
+        socket.broadcast.to(existingRoom._id.toString()).emit("join-game", {
             message: "joined game",
             game: result,
         });
@@ -104,8 +104,8 @@ const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         yield existingRoom.save();
         const socket = req.app.get("socket");
         console.log(`user left room ${roomId}`);
-        socket.leave(roomId);
-        socket.to(roomId).emit("leave-game", {
+        socket.leave(roomId.toString());
+        socket.broadcast.to(roomId.toString()).emit("leave-game", {
             message: "left game",
             game: existingRoom,
         });
