@@ -8,6 +8,7 @@ interface userInterface {
 
 interface gameInterface {
   room: string;
+  active: boolean;
   users: {
     name: string;
     uuid: string;
@@ -37,6 +38,11 @@ const gameSchema = new Schema<gameInterface>(
   {
     room: {
       type: String,
+      required: true,
+    },
+    active: {
+      type: Boolean,
+      default: true,
       required: true,
     },
     users: [usersSchema],

@@ -24,15 +24,19 @@ const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const room = req.body.room;
     const name = req.body.name;
     const uuid = (0, uuid_1.v4)();
-    const newGame = new game_1.default({
-        room,
-        users: [{ name: name, uuid: uuid, isHost: true }],
-    });
     try {
+        const roomExists = yield game_1.default.findOne({ room: room, active: true });
+        if (roomExists) {
+            throw new Error("This room already exists");
+        }
+        const newGame = new game_1.default({
+            room,
+            users: [{ name: name, uuid: uuid, isHost: true }],
+        });
         const result = yield newGame.save();
         const socket = req.app.get("socket");
-        socket.join(result._id);
-        console.log(`${name} created room ${result._id}`);
+        socket.join(result._id.toString());
+        console.log(`${name} created room ${result._id.toString()}`);
         res.status(201).json({
             message: "created game",
             uuid: uuid,
@@ -55,15 +59,15 @@ const joinGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     const name = req.body.name;
     const uuid = (0, uuid_1.v4)();
     try {
-        const existingRoom = yield game_1.default.findOne({ room: room });
+        const existingRoom = yield game_1.default.findOne({ room: room, active: true });
         if (!existingRoom) {
             throw new Error("Room does not exist");
         }
         existingRoom.users.push({ name: name, uuid: uuid });
         const result = yield existingRoom.save();
         const socket = req.app.get("socket");
-        socket.join(existingRoom._id);
-        console.log(`${name} joined room ${existingRoom._id}`);
+        socket.join(existingRoom._id.toString());
+        console.log(`${name} joined room ${existingRoom._id.toString()}`);
         socket.to(existingRoom._id.toString()).emit("join-game", {
             message: "joined game",
             game: result,
@@ -93,6 +97,9 @@ const leaveGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function
             throw new Error("Room does not exist");
         }
         const updatedUsers = existingRoom.users.filter((user) => user.uuid !== uuid);
+        if (updatedUsers.length === 0) {
+            existingRoom.active = false;
+        }
         existingRoom.users = updatedUsers;
         yield existingRoom.save();
         const socket = req.app.get("socket");

@@ -14,17 +14,23 @@ export const createGame: RequestHandler = async (req, res, next) => {
   const name = (req.body as { name: string }).name;
   const uuid = uuidv4();
 
-  const newGame = new Game({
-    room,
-    users: [{ name: name, uuid: uuid, isHost: true }],
-  });
-
   try {
+    const roomExists = await Game.findOne({ room: room, active: true });
+
+    if (roomExists) {
+      throw new Error("This room already exists");
+    }
+
+    const newGame = new Game({
+      room,
+      users: [{ name: name, uuid: uuid, isHost: true }],
+    });
+
     const result = await newGame.save();
 
     const socket = req.app.get("socket");
-    socket.join(result._id);
-    console.log(`${name} created room ${result._id}`);
+    socket.join(result._id.toString());
+    console.log(`${name} created room ${result._id.toString()}`);
 
     res.status(201).json({
       message: "created game",
@@ -49,7 +55,7 @@ export const joinGame: RequestHandler = async (req, res, next) => {
   const uuid = uuidv4();
 
   try {
-    const existingRoom = await Game.findOne({ room: room });
+    const existingRoom = await Game.findOne({ room: room, active: true });
 
     if (!existingRoom) {
       throw new Error("Room does not exist");
@@ -60,8 +66,8 @@ export const joinGame: RequestHandler = async (req, res, next) => {
     const result = await existingRoom.save();
 
     const socket = req.app.get("socket");
-    socket.join(existingRoom._id);
-    console.log(`${name} joined room ${existingRoom._id}`);
+    socket.join(existingRoom._id.toString());
+    console.log(`${name} joined room ${existingRoom._id.toString()}`);
 
     socket.to(existingRoom._id.toString()).emit("join-game", {
       message: "joined game",
@@ -96,6 +102,10 @@ export const leaveGame: RequestHandler = async (req, res, next) => {
     const updatedUsers = existingRoom.users.filter(
       (user) => user.uuid !== uuid
     );
+
+    if (updatedUsers.length === 0) {
+      existingRoom.active = false;
+    }
 
     existingRoom.users = updatedUsers;
     await existingRoom.save();

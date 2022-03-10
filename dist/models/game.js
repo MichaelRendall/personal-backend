@@ -25,6 +25,11 @@ const gameSchema = new Schema({
         type: String,
         required: true,
     },
+    active: {
+        type: Boolean,
+        default: true,
+        required: true,
+    },
     users: [usersSchema],
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("Game", gameSchema);

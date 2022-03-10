@@ -38,7 +38,6 @@ mongoose_1.default
     io.use((socket, next) => {
         const sessionId = socket.handshake.auth.sessionId;
         const roomId = socket.handshake.auth.roomId;
-        console.log(`found session ${sessionId} and room ${roomId}`);
         if (sessionId) {
             socket.sessionId = sessionId;
             socket.roomId = roomId;
@@ -49,14 +48,12 @@ mongoose_1.default
         next();
     });
     io.on("connection", (socket) => {
-        console.log(`connection ${socket.sessionId} in room ${socket.roomId}`);
         app.set("socket", socket);
         socket.emit("session", {
             sessionId: socket.sessionId,
             roomId: socket.roomId,
         });
         if (socket.roomId) {
-            console.log(`rejoined room ${socket.roomId}`);
             socket.join(socket.roomId);
         }
     });
