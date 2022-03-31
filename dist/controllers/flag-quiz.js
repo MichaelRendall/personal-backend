@@ -48,7 +48,7 @@ const getScoreboard = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         }
         res.status(200).json({
             message: "got scoreboard",
-            scoreboard,
+            flagScores: scoreboard,
         });
     }
     catch (err) {

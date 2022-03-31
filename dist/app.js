@@ -7,10 +7,15 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const paper_game_1 = __importDefault(require("./routes/paper-game"));
+const flag_quiz_1 = __importDefault(require("./routes/flag-quiz"));
 const socket_io_1 = require("socket.io");
 const uuid_1 = require("uuid");
+const helmet_1 = __importDefault(require("helmet"));
+const compression_1 = __importDefault(require("compression"));
 require("dotenv/config");
 const app = (0, express_1.default)();
+app.use((0, helmet_1.default)());
+app.use((0, compression_1.default)());
 app.use(body_parser_1.default.json());
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -19,17 +24,17 @@ app.use((req, res, next) => {
     next();
 });
 app.use(paper_game_1.default);
+app.use("/flag-quiz", flag_quiz_1.default);
 app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 });
 mongoose_1.default
-    .connect(`mongodb+srv://${process.env.DATABASE_NAME}:${process.env.DATABASE_PASSWORD}@cluster0.dyb0r.mongodb.net/games?retryWrites=true&w=majority`)
+    .connect(`mongodb+srv://${process.env.DATABASE_NAME}:${process.env.DATABASE_PASSWORD}@cluster0.dyb0r.mongodb.net/${process.env.DATABASE_DB}?retryWrites=true&w=majority`)
     .then((result) => {
-    const server = app.listen(8080);
-    //const io = require("socket.io")(server);
+    const server = app.listen(process.env.PORT || 8080);
     const io = new socket_io_1.Server(server, {
         cors: {
-            origin: "http://localhost:3000",
+            origin: process.env.CLIENT_URL || "http://localhost:3000",
             methods: ["GET", "POST"],
         },
     });

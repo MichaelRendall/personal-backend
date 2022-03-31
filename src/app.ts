@@ -2,12 +2,17 @@ import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import paperGameRoutes from "./routes/paper-game";
+import flagQuizRoutes from "./routes/flag-quiz";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
+import helmet from "helmet";
+import compression from "compression";
 import "dotenv/config";
 
 const app = express();
 
+app.use(helmet());
+app.use(compression());
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -22,6 +27,7 @@ app.use((req, res, next) => {
 });
 
 app.use(paperGameRoutes);
+app.use("/flag-quiz", flagQuizRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: err.message });
@@ -29,14 +35,13 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 mongoose
   .connect(
-    `mongodb+srv://${process.env.DATABASE_NAME}:${process.env.DATABASE_PASSWORD}@cluster0.dyb0r.mongodb.net/games?retryWrites=true&w=majority`
+    `mongodb+srv://${process.env.DATABASE_NAME}:${process.env.DATABASE_PASSWORD}@cluster0.dyb0r.mongodb.net/${process.env.DATABASE_DB}?retryWrites=true&w=majority`
   )
   .then((result) => {
-    const server = app.listen(8080);
-    //const io = require("socket.io")(server);
+    const server = app.listen(process.env.PORT || 8080);
     const io = new Server(server, {
       cors: {
-        origin: "http://localhost:3000", //your client URL
+        origin: process.env.CLIENT_URL || "http://localhost:3000",
         methods: ["GET", "POST"],
       },
     });
@@ -47,7 +52,7 @@ mongoose
     io.use((socket: any, next) => {
       const sessionId = socket.handshake.auth.sessionId;
       const roomId = socket.handshake.auth.roomId;
-	  
+
       if (sessionId) {
         socket.sessionId = sessionId;
         socket.roomId = roomId;

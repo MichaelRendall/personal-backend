@@ -40,7 +40,7 @@ export const getScoreboard: RequestHandler = async (req, res, next) => {
 
     res.status(200).json({
       message: "got scoreboard",
-      scoreboard,
+      flagScores: scoreboard,
     });
   } catch (err) {
     next(err);
