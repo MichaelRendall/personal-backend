@@ -22,16 +22,19 @@ const submitScore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
     const nickname = req.body.nickname;
     const score = req.body.score;
+    const time = req.body.time;
     try {
         const newQuizScore = new flag_quiz_1.default({
             nickname,
             score,
+            time,
         });
         yield newQuizScore.save();
         res.status(201).json({
             message: "score submitted",
             nickname,
             score,
+            time,
         });
     }
     catch (err) {

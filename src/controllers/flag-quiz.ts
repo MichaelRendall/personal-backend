@@ -10,11 +10,13 @@ export const submitScore: RequestHandler = async (req, res, next) => {
 
   const nickname = (req.body as { nickname: string }).nickname;
   const score = (req.body as { score: number }).score;
+  const time = (req.body as { time: number }).time;
 
   try {
     const newQuizScore = new FlagQuiz({
       nickname,
       score,
+      time,
     });
 
     await newQuizScore.save();
@@ -23,6 +25,7 @@ export const submitScore: RequestHandler = async (req, res, next) => {
       message: "score submitted",
       nickname,
       score,
+      time,
     });
   } catch (err) {
     console.log(err);

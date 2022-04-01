@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 interface flagQuizInterface {
   nickname: string;
   score: number;
+  time: number;
 }
 
 const Schema = mongoose.Schema;
@@ -14,6 +15,10 @@ const flagQuizSchema = new Schema<flagQuizInterface>(
       required: true,
     },
     score: {
+      type: Number,
+      required: true,
+    },
+    time: {
       type: Number,
       required: true,
     },
