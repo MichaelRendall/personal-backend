@@ -45,7 +45,7 @@ const submitScore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.submitScore = submitScore;
 const getScoreboard = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const scoreboard = yield flag_quiz_1.default.find();
+        const scoreboard = yield flag_quiz_1.default.find().sort({ score: -1, time: 1 });
         if (!scoreboard) {
             throw new Error("No Scores Exist Yet");
         }

@@ -35,7 +35,7 @@ export const submitScore: RequestHandler = async (req, res, next) => {
 
 export const getScoreboard: RequestHandler = async (req, res, next) => {
   try {
-    const scoreboard = await FlagQuiz.find();
+    const scoreboard = await FlagQuiz.find().sort({ score: -1, time: 1 });
 
     if (!scoreboard) {
       throw new Error("No Scores Exist Yet");
