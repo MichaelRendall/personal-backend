@@ -11,12 +11,14 @@ export const submitScore: RequestHandler = async (req, res, next) => {
   const nickname = (req.body as { nickname: string }).nickname;
   const score = (req.body as { score: number }).score;
   const time = (req.body as { time: number }).time;
+  const filters = (req.body as { filter: {} }).filter;
 
   try {
     const newQuizScore = new FlagQuiz({
       nickname,
       score,
       time,
+      filters,
     });
 
     await newQuizScore.save();
@@ -34,8 +36,13 @@ export const submitScore: RequestHandler = async (req, res, next) => {
 };
 
 export const getScoreboard: RequestHandler = async (req, res, next) => {
+  const filters = (req.body as { filter: {} }).filter;
+
   try {
-    const scoreboard = await FlagQuiz.find().sort({ score: -1, time: 1 });
+    const scoreboard = await FlagQuiz.find({ filters: filters }).sort({
+      score: -1,
+      time: 1,
+    });
 
     if (!scoreboard) {
       throw new Error("No Scores Exist Yet");

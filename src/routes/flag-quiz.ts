@@ -10,6 +10,6 @@ router.post(
   submitScore
 );
 
-router.get("/get-scoreboard", getScoreboard);
+router.post("/get-scoreboard", getScoreboard);
 
 export default router;

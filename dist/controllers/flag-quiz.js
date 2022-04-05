@@ -23,11 +23,13 @@ const submitScore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     const nickname = req.body.nickname;
     const score = req.body.score;
     const time = req.body.time;
+    const filters = req.body.filter;
     try {
         const newQuizScore = new flag_quiz_1.default({
             nickname,
             score,
             time,
+            filters,
         });
         yield newQuizScore.save();
         res.status(201).json({
@@ -44,8 +46,12 @@ const submitScore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.submitScore = submitScore;
 const getScoreboard = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const filters = req.body.filter;
     try {
-        const scoreboard = yield flag_quiz_1.default.find().sort({ score: -1, time: 1 });
+        const scoreboard = yield flag_quiz_1.default.find({ filters: filters }).sort({
+            score: -1,
+            time: 1,
+        });
         if (!scoreboard) {
             throw new Error("No Scores Exist Yet");
         }
