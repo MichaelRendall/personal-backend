@@ -48,10 +48,12 @@ exports.submitScore = submitScore;
 const getScoreboard = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = req.body.filter;
     try {
-        const scoreboard = yield flag_quiz_1.default.find({ filters: filters }).sort({
+        const scoreboard = yield flag_quiz_1.default.find({ filters: filters })
+            .sort({
             score: -1,
             time: 1,
-        });
+        })
+            .limit(10);
         if (!scoreboard) {
             throw new Error("No Scores Exist Yet");
         }

@@ -39,10 +39,12 @@ export const getScoreboard: RequestHandler = async (req, res, next) => {
   const filters = (req.body as { filter: {} }).filter;
 
   try {
-    const scoreboard = await FlagQuiz.find({ filters: filters }).sort({
-      score: -1,
-      time: 1,
-    });
+    const scoreboard = await FlagQuiz.find({ filters: filters })
+      .sort({
+        score: -1,
+        time: 1,
+      })
+      .limit(10);
 
     if (!scoreboard) {
       throw new Error("No Scores Exist Yet");
