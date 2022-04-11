@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { createTransport, createTestAccount } from "nodemailer";
+import { createTransport } from "nodemailer";
 
 export const sendMessage: RequestHandler = async (req, res, next) => {
   try {
