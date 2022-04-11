@@ -11,6 +11,7 @@ Work in progess RestAPI for personal site
 
 - Node
 - Express
+- TypeScript
 - SocketIO
 - MongoDB (Mongoose)
 - Nodemailer
