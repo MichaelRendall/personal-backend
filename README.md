@@ -1,5 +1,16 @@
 # Backend for Personal Site
 
-Backend RestAPI for personal site
+Work in progess RestAPI for personal site
 
-Frontend can be found temporarily at https://michael-rendall.vercel.app/
+### Links
+
+- [Frontend can be found here](https://michaelrendall.co.uk/)
+- [Frontend Repo](https://github.com/MichaelRendall/personal)
+
+### Backend built with
+
+- Node
+- Express
+- SocketIO
+- MongoDB (Mongoose)
+- Nodemailer
