@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import paperGameRoutes from "./routes/paper-game";
 import flagQuizRoutes from "./routes/flag-quiz";
+import contactRoutes from "./routes/contact";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import helmet from "helmet";
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 
 app.use(paperGameRoutes);
 app.use("/flag-quiz", flagQuizRoutes);
+app.use("/contact", contactRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: err.message });

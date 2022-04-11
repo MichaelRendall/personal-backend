@@ -8,6 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const paper_game_1 = __importDefault(require("./routes/paper-game"));
 const flag_quiz_1 = __importDefault(require("./routes/flag-quiz"));
+const contact_1 = __importDefault(require("./routes/contact"));
 const socket_io_1 = require("socket.io");
 const uuid_1 = require("uuid");
 const helmet_1 = __importDefault(require("helmet"));
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 });
 app.use(paper_game_1.default);
 app.use("/flag-quiz", flag_quiz_1.default);
+app.use("/contact", contact_1.default);
 app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 });
