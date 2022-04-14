@@ -16,9 +16,10 @@ const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     try {
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
-            throw new Error("Please fill your name and message");
+            throw new Error("Please fill in all the fields");
         }
         const name = req.body.name;
+        const email = req.body.email;
         const message = req.body.message;
         const transporter = (0, nodemailer_1.createTransport)({
             service: "hotmail",
@@ -29,12 +30,12 @@ const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             tls: { rejectUnauthorized: false },
         });
         // send mail with defined transport object
-        let info = yield transporter.sendMail({
+        yield transporter.sendMail({
             from: `"Michael Messages" <${process.env.EMAIL_USER}>`,
             to: "michaelrendallmail@gmail.com",
             subject: `New Message From ${name}`,
-            text: message,
-            html: message, // html body
+            text: `Name: ${name} Email: ${email} Message: ${message}`,
+            html: `<p><b>Name</b>: ${name}</p><p><b>Email</b>: ${email}</p><p><b>Message</b>: ${message}</p>`, // html body
         });
         res.status(201).json({
             message: "message sent",

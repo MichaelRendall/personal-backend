@@ -6,7 +6,11 @@ const router = Router();
 
 router.post(
   "/send-message",
-  [body("name").trim().not().isEmpty(), body("message").trim().not().isEmpty()],
+  [
+    body("name").trim().not().isEmpty(),
+    body("email").trim().isEmail(),
+    body("message").trim().not().isEmpty(),
+  ],
   sendMessage
 );
 
