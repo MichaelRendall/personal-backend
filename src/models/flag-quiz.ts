@@ -4,7 +4,7 @@ interface flagQuizInterface {
   nickname: string;
   score: number;
   time: number;
-  filters: { continent: string };
+  filters: { continent: string; colours: string };
 }
 
 const Schema = mongoose.Schema;
@@ -23,7 +23,10 @@ const flagQuizSchema = new Schema<flagQuizInterface>(
       type: Number,
       required: true,
     },
-    filters: { continent: { type: String, required: true } },
+    filters: {
+      continent: { type: String, required: true },
+      colours: { type: String, required: true },
+    },
   },
   { timestamps: true }
 );

@@ -18,6 +18,9 @@ const flagQuizSchema = new Schema({
         type: Number,
         required: true,
     },
-    filters: { continent: { type: String, required: true } },
+    filters: {
+        continent: { type: String, required: true },
+        colours: { type: String, required: true },
+    },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("FlagQuiz", flagQuizSchema);
